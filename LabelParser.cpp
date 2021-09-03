@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <vector>
+//#include <iostream>
 
 std::unordered_map<SENSOR, PlotLabel> getPropsenLabels() {
     std::unordered_map<SENSOR, PlotLabel> label_mappings;
@@ -32,7 +33,7 @@ std::unordered_map<SENSOR, PlotLabel> getPropsenLabels() {
     bool successfulTcRead = parseFromStream(tc_reader, tcs, &tcMapping, &tc_errs);
 
     const Json::Value& ind_pt_mappings = ptMapping["pts"];
-    const Json::Value& ind_tc_mappings = ptMapping["tcs"];
+    const Json::Value& ind_tc_mappings = tcMapping["tcs"];
 
     //add PT
     std::vector<SENSOR> pt_enums = {PT01, PT02, PT03, PT04, PT05,
@@ -56,6 +57,32 @@ std::unordered_map<SENSOR, PlotLabel> getPropsenLabels() {
 
     //add Load Cell
     label_mappings[LC01] = {PROPSEN, LC01, "Load Cell", "Load Cell reading"};
+    
+    //generate derivative mappings based off pt, tc, and lc mappings
+    //add PT derivatives
+    std::vector<SENSOR> pt_ddt_enums = {PT01_DT, PT02_DT, PT03_DT, PT04_DT, PT05_DT,
+                                        PT06_DT, PT07_DT, PT08_DT, PT09_DT, PT10_DT,
+                                        PT11_DT, PT12_DT, PT13_DT, PT14_DT, PT15_DT,
+                                        PT16_DT};
+    //use pt_enums.size() to ensure that we're mapping only available PTs in json
+    for (int i = 0; i < pt_enums.size(); i++) {
+        label_mappings[pt_ddt_enums[i]] = {PROPSEN, pt_ddt_enums[i], ind_pt_mappings[i]["name"].asString() + " d/dt",
+                                    ind_pt_mappings[i]["name"].asString() + " d/dt reading"};
+    }
+
+    //add TC derivatives
+    std::vector<SENSOR> tc_ddt_enums = {TC01_DT, TC02_DT, TC03_DT, TC04_DT, TC05_DT,
+                                        TC06_DT, TC07_DT, TC08_DT, TC09_DT, TC10_DT,
+                                        TC11_DT, TC12_DT, TC13_DT, TC14_DT, TC15_DT,
+                                        TC16_DT};
+    //use tc_enums.size() to ensure that we're mapping only available TCs in json
+    for (int i = 0; i < tc_enums.size(); i++) {
+        label_mappings[tc_ddt_enums[i]] = {PROPSEN, tc_ddt_enums[i], ind_tc_mappings[i]["name"].asString() + " d/dt",
+                                    ind_tc_mappings[i]["name"].asString() + " d/dt reading"};
+    }       
+    
+    //add Load Cell derivative
+    label_mappings[LC01_DT] = {PROPSEN, LC01_DT, "Load Cell d/dt", "Load Cell d/dt reading"};
 
     return label_mappings;
 }

@@ -46,7 +46,8 @@ struct AvsenDataMsg{
 	bool adxl_persistance[3] = {false};
 	bool test_running = false;// something for DIGISIM/SSHSIM
 
-	float time{0.0};
+	//float time{0.0};
+	uint32_t time{0};
 };
 
 struct PropsenDataMsg{
@@ -66,7 +67,8 @@ struct PropsenDataMsg{
 	bool pt_calstate = false;
 	bool tc_calstate = false;
 
-	float time{0.0};
+	//float time{0.0};
+	uint32_t time{0};
 };
 
 #endif

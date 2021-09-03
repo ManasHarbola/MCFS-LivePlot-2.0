@@ -1,6 +1,6 @@
 #OBJS = main.o myarea.o mywindow.o sensor.o Valve.o miscparts.o tank.o line.o pid.o
 #OBJS = main.o Graph.o GraphWindow.o
-PLOTTER_OBJS = main.o GraphWindow.o GraphManager.o MsgReceiver.o Base64Tools.o LabelParser.o
+PLOTTER_OBJS = main.o GraphWindow.o GraphManager.o MsgReceiver.o LabelParser.o
 
 OBJS = main.o GraphWindow.o
 

@@ -32,7 +32,33 @@ const std::unordered_map<SENSOR, PlotLabel> avsenLabels = {
     {GYRO_X_1,  {AVSEN, GYRO_X_1, "GYRO X (1)", "GYRO X (1) reading"}},
     {ACCEL_Z_1, {AVSEN, ACCEL_Z_1, "ACCEL Z (1)", "ACCEL Z (1) reading"}},
     {ACCEL_Y_1, {AVSEN, ACCEL_Y_1, "ACCEL Y (1)", "ACCEL Y (1) reading"}},
-    {ACCEL_X_1, {AVSEN, ACCEL_X_1, "ACCEL X (1)", "ACCEL X (1) reading"}}
+    {ACCEL_X_1, {AVSEN, ACCEL_X_1, "ACCEL X (1)", "ACCEL X (1) reading"}},
+
+    //derivatives entries
+    {ADXL_Z_DT,    {AVSEN, ADXL_Z_DT, "ADXL Z d/dt", "ADXL Z d/dt reading"}},
+    {ADXL_Y_DT,    {AVSEN, ADXL_Y_DT, "ADXL Y d/dt", "ADXL Y d/dt reading"}},
+    {ADXL_X_DT,    {AVSEN, ADXL_X_DT, "ADXL X d/dt", "ADXL X d/dt reading"}},
+    {GPS_ALT_DT,   {AVSEN, GPS_ALT_DT, "GPS ALTITUDE d/dt", "GPS Altitude d/dt reading"}},
+    {GPS_LONG_DT,  {AVSEN, GPS_LONG_DT, "GPS LONGITUDE d/dt", "GPS Longitude d/dt reading"}},
+    {GPS_LAT_DT,   {AVSEN, GPS_LAT_DT, "GPS LATITUDE d/dt", "GPS Latitude d/dt reading"}},
+    {PRESSURE_DT,  {AVSEN, PRESSURE_DT, "PRESSURE d/dt", "PRESSURE d/dt reading"}},
+    {ALTITUDE_DT,  {AVSEN, ALTITUDE_DT, "ALTITUDE d/dt", "ALTITUDE d/dt reading"}},
+    {MAG_Z_DT,     {AVSEN, MAG_Z_DT, "MAG Z d/dt", "MAG Z d/dt reading"}},
+    {MAG_Y_DT,     {AVSEN, MAG_Y_DT, "MAG Y d/dt", "MAG Y d/dt reading"}},
+    {MAG_X_DT,     {AVSEN, MAG_X_DT, "MAG X d/dt", "MAG X d/dt reading"}},
+    {GYRO_Z_2_DT,  {AVSEN, GYRO_Z_2_DT, "GYRO Z (2) d/dt", "GYRO Z (2) d/dt reading"}},
+    {GYRO_Y_2_DT,  {AVSEN, GYRO_Y_2_DT, "GYRO Y (2) d/dt", "GYRO Y (2) d/dt reading"}},
+    {GYRO_X_2_DT,  {AVSEN, GYRO_X_2_DT, "GYRO X (2) d/dt", "GYRO X (2) d/dt reading"}},
+    {ACCEL_Z_2_DT, {AVSEN, ACCEL_Z_2_DT, "ACCEL Z (2) d/dt", "ACCEL Z (2) d/dt reading"}},
+    {ACCEL_Y_2_DT, {AVSEN, ACCEL_Y_2_DT, "ACCEL Y (2) d/dt", "ACCEL Y (2) d/dt reading"}},
+    {ACCEL_X_2_DT, {AVSEN, ACCEL_X_2_DT, "ACCEL X (2) d/dt", "ACCEL X (2) d/dt reading"}},
+    {GYRO_Z_1_DT,  {AVSEN, GYRO_Z_1_DT, "GYRO Z (1) d/dt", "GYRO Z (1) d/dt reading"}},
+    {GYRO_Y_1_DT,  {AVSEN, GYRO_Y_1_DT, "GYRO Y (1) d/dt", "GYRO Y (1) d/dt reading"}},
+    {GYRO_X_1_DT,  {AVSEN, GYRO_X_1_DT, "GYRO X (1) d/dt", "GYRO X (1) d/dt reading"}},
+    {ACCEL_Z_1_DT, {AVSEN, ACCEL_Z_1_DT, "ACCEL Z (1) d/dt", "ACCEL Z (1) d/dt reading"}},
+    {ACCEL_Y_1_DT, {AVSEN, ACCEL_Y_1_DT, "ACCEL Y (1) d/dt", "ACCEL Y (1) d/dt reading"}},
+    {ACCEL_X_1_DT, {AVSEN, ACCEL_X_1_DT, "ACCEL X (1) d/dt", "ACCEL X (1) d/dt reading"}},
+
 };
 
 std::unordered_map<SENSOR, PlotLabel> getPropsenLabels();

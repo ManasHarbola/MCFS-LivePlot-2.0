@@ -35,7 +35,28 @@ class GraphManager {
 
             {ADXL_X, &snapshot_.avsenMsg.adxl[0]},      {ADXL_Y, &snapshot_.avsenMsg.adxl[1]},
             {ADXL_Z, &snapshot_.avsenMsg.adxl[2]},
+
+            //AVSEN derivative enums
+            {ACCEL_X_1_DT, &snapshot_.avsenMsg.accel_ddt[0]},  {ACCEL_Y_1_DT, &snapshot_.avsenMsg.accel_ddt[1]},  
+            {ACCEL_Z_1_DT, &snapshot_.avsenMsg.accel_ddt[2]},  {ACCEL_X_2_DT, &snapshot_.avsenMsg.accel_ddt[3]},
+            {ACCEL_Y_2_DT, &snapshot_.avsenMsg.accel_ddt[4]},  {ACCEL_Z_2_DT, &snapshot_.avsenMsg.accel_ddt[5]},
+
+            {GYRO_X_1_DT, &snapshot_.avsenMsg.gyro_ddt[0]},    {GYRO_Y_1_DT, &snapshot_.avsenMsg.gyro_ddt[1]},
+            {GYRO_Z_1_DT, &snapshot_.avsenMsg.gyro_ddt[2]},    {GYRO_X_2_DT, &snapshot_.avsenMsg.gyro_ddt[3]},  
+            {GYRO_Y_2_DT, &snapshot_.avsenMsg.gyro_ddt[4]},    {GYRO_Z_2_DT, &snapshot_.avsenMsg.gyro_ddt[5]},
+
+            {MAG_X_DT, &snapshot_.avsenMsg.mag_ddt[0]},        {MAG_Y_DT, &snapshot_.avsenMsg.mag_ddt[1]},
+            {MAG_Z_DT, &snapshot_.avsenMsg.mag_ddt[2]},
             
+            {ALTITUDE_DT, &snapshot_.avsenMsg.alt_ddt},        {PRESSURE_DT, &snapshot_.avsenMsg.press_ddt},
+            
+            {GPS_LAT_DT, &snapshot_.avsenMsg.gps_ddt[0]},      {GPS_LONG_DT, &snapshot_.avsenMsg.gps_ddt[1]},
+            {GPS_ALT_DT, &snapshot_.avsenMsg.gps_ddt[2]},
+
+            {ADXL_X_DT, &snapshot_.avsenMsg.adxl_ddt[0]},      {ADXL_Y_DT, &snapshot_.avsenMsg.adxl_ddt[1]},
+            {ADXL_Z_DT, &snapshot_.avsenMsg.adxl_ddt[2]},
+
+
             //PROPSEN enums
             {PT01, &snapshot_.propsenMsg.pt[0]},        {PT02, &snapshot_.propsenMsg.pt[1]},
             {PT03, &snapshot_.propsenMsg.pt[2]},        {PT04, &snapshot_.propsenMsg.pt[3]},
@@ -55,7 +76,29 @@ class GraphManager {
             {TC13, &snapshot_.propsenMsg.tc[12]},       {TC14, &snapshot_.propsenMsg.tc[13]},
             {TC15, &snapshot_.propsenMsg.tc[14]},       {TC16, &snapshot_.propsenMsg.tc[15]},
 
-            {LC01, &snapshot_.propsenMsg.lc01}
+            {LC01, &snapshot_.propsenMsg.lc01},
+
+            //PROPSEN derivative enums
+            {PT01_DT, &snapshot_.propsenMsg.pt_ddt[0]},        {PT02_DT, &snapshot_.propsenMsg.pt_ddt[1]},
+            {PT03_DT, &snapshot_.propsenMsg.pt_ddt[2]},        {PT04_DT, &snapshot_.propsenMsg.pt_ddt[3]},
+            {PT05_DT, &snapshot_.propsenMsg.pt_ddt[4]},        {PT06_DT, &snapshot_.propsenMsg.pt_ddt[5]},
+            {PT07_DT, &snapshot_.propsenMsg.pt_ddt[6]},        {PT08_DT, &snapshot_.propsenMsg.pt_ddt[7]},
+            {PT09_DT, &snapshot_.propsenMsg.pt_ddt[8]},        {PT10_DT, &snapshot_.propsenMsg.pt_ddt[9]},
+            {PT11_DT, &snapshot_.propsenMsg.pt_ddt[10]},       {PT12_DT, &snapshot_.propsenMsg.pt_ddt[11]},
+            {PT13_DT, &snapshot_.propsenMsg.pt_ddt[12]},       {PT14_DT, &snapshot_.propsenMsg.pt_ddt[13]},
+            {PT15_DT, &snapshot_.propsenMsg.pt_ddt[14]},       {PT16_DT, &snapshot_.propsenMsg.pt_ddt[15]},
+            
+            {TC01_DT, &snapshot_.propsenMsg.tc_ddt[0]},        {TC02_DT, &snapshot_.propsenMsg.tc_ddt[1]},
+            {TC03_DT, &snapshot_.propsenMsg.tc_ddt[2]},        {TC04_DT, &snapshot_.propsenMsg.tc_ddt[3]},
+            {TC05_DT, &snapshot_.propsenMsg.tc_ddt[4]},        {TC06_DT, &snapshot_.propsenMsg.tc_ddt[5]},
+            {TC07_DT, &snapshot_.propsenMsg.tc_ddt[6]},        {TC08_DT, &snapshot_.propsenMsg.tc_ddt[7]},
+            {TC09_DT, &snapshot_.propsenMsg.tc_ddt[8]},        {TC10_DT, &snapshot_.propsenMsg.tc_ddt[9]},
+            {TC11_DT, &snapshot_.propsenMsg.tc_ddt[10]},       {TC12_DT, &snapshot_.propsenMsg.tc_ddt[11]},
+            {TC13_DT, &snapshot_.propsenMsg.tc_ddt[12]},       {TC14_DT, &snapshot_.propsenMsg.tc_ddt[13]},
+            {TC15_DT, &snapshot_.propsenMsg.tc_ddt[14]},       {TC16_DT, &snapshot_.propsenMsg.tc_ddt[15]},
+
+            {LC01_DT, &snapshot_.propsenMsg.lc01_ddt}
+
         };
         
     private:

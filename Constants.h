@@ -11,7 +11,8 @@ const int ONE_SECOND_USECONDS = 1000000;
 enum MessageType {
 	UNKNOWN,
 	AVSEN,
-	PROPSEN
+	PROPSEN,
+    QUIT //used for quitting plotter from renderer side
 };
 
 enum SENSOR {
@@ -30,6 +31,22 @@ enum SENSOR {
 
     ADXL_X, ADXL_Y, ADXL_Z,
 
+    //derivative AVSEN sensor values
+    ACCEL_X_1_DT, ACCEL_Y_1_DT, ACCEL_Z_1_DT,
+    ACCEL_X_2_DT, ACCEL_Y_2_DT, ACCEL_Z_2_DT,
+
+    GYRO_X_1_DT, GYRO_Y_1_DT, GYRO_Z_1_DT,
+    GYRO_X_2_DT, GYRO_Y_2_DT, GYRO_Z_2_DT,
+
+    MAG_X_DT, MAG_Y_DT, MAG_Z_DT,
+
+    ALTITUDE_DT, PRESSURE_DT,
+
+    GPS_LAT_DT, GPS_LONG_DT, GPS_ALT_DT,
+
+    ADXL_X_DT, ADXL_Y_DT, ADXL_Z_DT,
+
+
     //Propsen sensors 
     PT01, PT02, PT03, PT04, 
     PT05, PT06, PT07, PT08, 
@@ -41,7 +58,20 @@ enum SENSOR {
     TC09, TC10, TC11, TC12, 
     TC13, TC14, TC15, TC16, 
 
-    LC01
+    LC01,
+
+    //derivative PROPSEN sensor values
+    PT01_DT, PT02_DT, PT03_DT, PT04_DT, 
+    PT05_DT, PT06_DT, PT07_DT, PT08_DT, 
+    PT09_DT, PT10_DT, PT11_DT, PT12_DT, 
+    PT13_DT, PT14_DT, PT15_DT, PT16_DT, 
+    
+    TC01_DT, TC02_DT, TC03_DT, TC04_DT, 
+    TC05_DT, TC06_DT, TC07_DT, TC08_DT, 
+    TC09_DT, TC10_DT, TC11_DT, TC12_DT, 
+    TC13_DT, TC14_DT, TC15_DT, TC16_DT, 
+
+    LC01_DT
 };
 
 const std::unordered_map<std::string, MessageType> headerToMessageType {

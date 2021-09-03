@@ -3,6 +3,7 @@
 #include "GraphManager.h"
 #include <chrono>
 #include <thread>
+#include <stdio.h>
 
 GraphManager::GraphManager(std::mutex& mLock, std::queue<SnapshotDataMsg>& qRef,
                            GraphWindow& window, double samplingFreq) :
@@ -48,17 +49,34 @@ int GraphManager::listen() {
             while (!render_queue.empty()) {
                 snapshot_ = render_queue.front();
                 render_queue.pop();
+
+                if (snapshot_.msgType == QUIT) {
+                    std::cout << "GraphManager received QUIT message, terminating GraphManager::listen()..." << std::endl;
+                    
+                    //HACKY AF, KILLS PROCESS TO GET RID OF APPLICATION WINDOW
+                    //TODO: PLEASE FIND A WAY TO KILL APPLICATION WINDOW BY CODE PROPERLY
+                    exit(0);
+                    return 0;
+                }
+
                 for (auto pair : managedWindow_.getSelectedPlots()[snapshot_.msgType]) {
                     auto plotData2DPtr = pair.second;
                     double newT;
 
                     switch(snapshot_.msgType) {
                         case AVSEN:
-                            newT = (double) snapshot_.avsenMsg.time;
+                            newT = snapshot_.avsenMsg.time / 1000.0;
                             break;
                         case PROPSEN:
-                            newT = (double) snapshot_.propsenMsg.time;
+                            newT = snapshot_.propsenMsg.time / 1000.0;
                             break;
+                        /*
+                        case QUIT:
+                            std::cout << "GraphManager received QUIT message, terminating GraphManager::listen()..." << std::endl;
+                            //terminate function
+                            return 0;
+                            break;
+                        */
                         default:
                             break;
                     }
