@@ -6,8 +6,9 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <chrono>
 
-#define PORT 8080
+#define PORT 63475
 
 char *startHeader = "STRT\0";
 char *quitHeader = "QUIT\0";
@@ -140,9 +141,16 @@ int main(int argc, char const *argv[])
     propsenMsg.pt[0] = 2.002;
     propsenMsg.pt[1] = 0.75;
     propsenMsg.tc_ddt[0] = 0.0;
-    avsenMsg.time = 0;
-    propsenMsg.time = 0;
+    avsenMsg.time_msec = 0;
+    propsenMsg.time_msec = 0;
     
+    /*
+    auto milli_since_epoch = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    uint64_t milli_time = milli_since_epoch;
+    std::cout << "chrono milliseconds: " << milli_since_epoch << std::endl;
+    std::cout << "uint64_t milliseconds: " << milli_time << std::endl;
+    */
+
     while (true) {
         auto start = std::chrono::high_resolution_clock::now();
 
@@ -151,9 +159,9 @@ int main(int argc, char const *argv[])
         propsenMsg.pt[0] = ((double) rand() / (RAND_MAX)) * 8;
         propsenMsg.tc_ddt[0] = ((double) rand() / (RAND_MAX)) * 10;
         
-        //propsenMsg.time += (duration / 1000000.0);
-        propsenMsg.time += (uint32_t)(duration / 1000);
-        //std::cout << propsenMsg.time << std::endl;
+        //propsenMsg.time_msec += (duration / 1000000.0);
+        propsenMsg.time_msec += (uint64_t)(duration / 1000);
+        //std::cout << propsenMsg.time_msec << std::endl;
 
         send(new_socket, (void *) avsenHeader, HEADER_LENGTH, 0);
         send(new_socket, static_cast<void *>(&avsenMsg), sizeof(avsenMsg), 0);
@@ -161,8 +169,8 @@ int main(int argc, char const *argv[])
         avsenMsg.accel[1] = ((double) rand() / (RAND_MAX)) * 2;
         avsenMsg.accel_ddt[3] = ((double) rand() / (RAND_MAX)) * 4;
         
-        //avsenMsg.time += (duration / 1000000.0);
-        avsenMsg.time += (uint32_t)(duration / 1000);
+        //avsenMsg.time_msec += (duration / 1000000.0);
+        avsenMsg.time_msec += (uint64_t)(duration / 1000);
 
         std::this_thread::sleep_for(std::chrono::microseconds(duration));
 
@@ -183,8 +191,8 @@ int main(int argc, char const *argv[])
             propsenMsg.pt[1] = 0.75;
             propsenMsg.tc_ddt[0] = 0.0;
 
-            avsenMsg.time = 0;
-            propsenMsg.time = 0;
+            avsenMsg.time_msec = 0;
+            propsenMsg.time_msec = 0;
 
             //send quit string
             std::cout << "SENDING QUIT STRING" << std::endl;

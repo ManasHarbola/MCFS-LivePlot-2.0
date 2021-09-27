@@ -14,6 +14,7 @@ GraphManager::GraphManager(std::mutex& mLock, std::queue<SnapshotDataMsg>& qRef,
     samplingFreq_ = samplingFreq;
     sleepDurationUseconds_ = (int) (ONE_SECOND_USECONDS / samplingFreq_);
     maxWindowPoints_ = (int) (60.0 * samplingFreq_);
+    maxWindowTime_ = 120.0;
 }
 
 
@@ -43,7 +44,7 @@ int GraphManager::listen() {
         
         std::chrono::duration<double, std::milli> delta2 = end2 - start;
 
-        std::cout << "added " << snapCount << " items to render_queue in " << delta2.count() << "ms\n";
+        //std::cout << "added " << snapCount << " items to render_queue in " << delta2.count() << "ms\n";
 
         if (newSnapReceived) {
             while (!render_queue.empty()) {
@@ -55,7 +56,7 @@ int GraphManager::listen() {
                     
                     //HACKY AF, KILLS PROCESS TO GET RID OF APPLICATION WINDOW
                     //TODO: PLEASE FIND A WAY TO KILL APPLICATION WINDOW BY CODE PROPERLY
-                    exit(0);
+                    managedWindow_.hide();
                     return 0;
                 }
 
@@ -65,10 +66,10 @@ int GraphManager::listen() {
 
                     switch(snapshot_.msgType) {
                         case AVSEN:
-                            newT = snapshot_.avsenMsg.time / 1000.0;
+                            newT = snapshot_.avsenMsg.time_msec / 1000.0;
                             break;
                         case PROPSEN:
-                            newT = snapshot_.propsenMsg.time / 1000.0;
+                            newT = snapshot_.propsenMsg.time_msec / 1000.0;
                             break;
                         /*
                         case QUIT:
@@ -83,8 +84,21 @@ int GraphManager::listen() {
 
                     //add data point, and remove oldest point if necessary
                     plotData2DPtr->add_datapoint(newT, *(snapshotLookupMap.at(pair.first)));
+                    /*
                     if (plotData2DPtr->size() > maxWindowPoints_) {
                         plotData2DPtr->remove_datapoint(0);
+                    }
+                    */
+
+                    double t_min, t_max;
+                    double y_min, y_max;
+                    while (true) {
+                        plotData2DPtr->get_extremes(t_min, t_max, y_min, y_max);
+                        if (t_max - t_min > maxWindowTime_) {
+                            plotData2DPtr->remove_datapoint(0);
+                        } else {
+                            break;
+                        }
                     }
                 }
             }
@@ -96,6 +110,6 @@ int GraphManager::listen() {
         auto end = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double, std::milli> delta = end - start;
 
-        std::cout << "time taken to render: " << delta.count() << "ms" << std::endl; 
+        //std::cout << "time taken to render: " << delta.count() << "ms" << std::endl; 
     }
 }

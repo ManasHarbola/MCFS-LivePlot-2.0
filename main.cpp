@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     //create MsgReceiver instance
     MsgReceiver receiver(messageQueue, queueMutex, 2 * freq);
     //open socket connection to server, receiver reads from socket 2 * freq hertz
-    receiver.connectToServer("127.0.0.1", 8080);
+    receiver.connectToServer("127.0.0.1", 63475);
     
     std::vector<std::vector<SENSOR>> plot_sensors = receiver.getRequestedSensors();
 
@@ -43,5 +43,8 @@ int main(int argc, char **argv) {
     managerThread.detach();
 
     //run window
-    return app->run(window);
+    int a = app->run(window);
+
+    std::cout << "[PLOT] Exiting with code " << a << std::endl;
+    return a;
 }

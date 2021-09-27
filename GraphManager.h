@@ -113,6 +113,7 @@ class GraphManager {
         double samplingFreq_;
         
         int maxWindowPoints_;
+        double maxWindowTime_;
 };
 
 

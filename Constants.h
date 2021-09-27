@@ -3,7 +3,7 @@
 
 #include <string>
 #include <unordered_map>
-#include "Structs.h"
+#include "../inter/dcpdp_definitions.h"
 
 //1 second = 1000000 microseconds
 const int ONE_SECOND_USECONDS = 1000000;

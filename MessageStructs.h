@@ -1,7 +1,6 @@
 #ifndef MESSAGESTRUCTS_H
 #define MESSAGESTRUCTS_H
 #include "Constants.h"
-#include "Structs.h"
 
 /*
 struct SnapshotDataMsg {

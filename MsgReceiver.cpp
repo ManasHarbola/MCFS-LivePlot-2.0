@@ -10,6 +10,22 @@
 #include "MessageStructs.h"
 #include "MsgReceiver.h"
 
+void ReadReadMessage(int sock, void* buffer, unsigned int x){
+	int bytesRead = 0;
+	int result;
+	//cout << "[SIZE2READ]: " << x;
+	while (bytesRead < x) {
+		result = read(sock, buffer + bytesRead, x - bytesRead);
+		if (result < 1) {
+			//oops something went wrong
+			return;
+		}
+		bytesRead += result;
+		//cout << " " << buffer;
+	}
+	//cout << '\n';
+}
+
 MsgReceiver::MsgReceiver(std::queue<SnapshotDataMsg>& qRef,
 std::mutex& mutexRef, double sampleFreq) : qRef_(qRef), mutexRef_(mutexRef) {
     sleepDuration_ = (int) (ONE_SECOND_USECONDS / sampleFreq);
@@ -35,13 +51,9 @@ bool MsgReceiver::connectToServer(std::string ip, int PORT) {
         //return -1;
         return false;
     }
-   
-    if (connect(sock_, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-    {
-        //return -1;
-        return false;
-    }
-    
+
+    // Loop until connected
+    while (connect(sock_, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) ;
     std::cout << "Connected!" << std::endl;
     return true;
 }
@@ -56,44 +68,37 @@ std::vector<std::vector<SENSOR>> MsgReceiver::getRequestedSensors() {
         return sensors;
     }
 
+    std::cout << "[PLOT] Sensor Setup: " << std::endl;
     //check to see if STRT was received first
-    int flag = recv( sock_, static_cast<void *>(&headerBuffer_), HEADER_SIZE, 0);
+    ReadReadMessage( sock_, &headerBuffer_, HEADER_SIZE);
+    std::cout << headerBuffer_ << std::endl;
 
-    if (flag == -1) {
-        std::cout << "An error occurred\n, terminating receiver..." << std::endl;
-        return sensors;
-    } else if (flag == 0) {
-        std::cout << "Server socket has shutdown, terminating receiver..." << std::endl;
-        return sensors;   //we consider this a graceful exit
-    }
+    /*
+    ReadReadMessage( sock_, &headerBuffer_, HEADER_SIZE);
+    std::cout << headerBuffer_ << std::endl;
+    */
 
-    if (std::string(headerBuffer_) == "STRT\0") {
-        size_t arr_sz;
+    if (std::string(headerBuffer_) == "STRT") {
+        std::cout << "[PLOT]   Received STRT" << std::endl;
+        uint64_t arr_sz;
         SENSOR currSensor;
 
         //get size of AVSEN array
-        flag = recv(sock_, static_cast<void *>(&arr_sz), sizeof(arr_sz), 0);
-        if (flag <= 0) {
-            return sensors;
-        }
+        ReadReadMessage(sock_, &arr_sz, sizeof(arr_sz));
+        std::cout << "[PLOT]   AVSEN: " << arr_sz << std::endl;
         for (size_t i = 0; i < arr_sz; i++) {
-            flag = recv(sock_, static_cast<void*>(&currSensor), sizeof(SENSOR), 0);
-            if (flag <= 0) {
-                break;
-            }
+            ReadReadMessage(sock_, &currSensor, sizeof(SENSOR));
+            
             sensors[0].push_back(currSensor);
         }
 
         //get size of PROPSEN array
-        flag = recv(sock_, static_cast<void *>(&arr_sz), sizeof(arr_sz), 0);
-        if (flag <= 0) {
-            return sensors;
-        }
+        ReadReadMessage(sock_, &arr_sz, sizeof(arr_sz));
+        
+        std::cout << "[PLOT]   PROPSEN: " << arr_sz << std::endl;
         for (size_t i = 0; i < arr_sz; i++) {
-            flag = recv(sock_, static_cast<void*>(&currSensor), sizeof(SENSOR), 0);
-            if (flag <= 0) {
-                break;
-            }
+            ReadReadMessage(sock_, static_cast<void*>(&currSensor), sizeof(SENSOR));
+            
             sensors[1].push_back(currSensor);
         }
     }
@@ -107,26 +112,38 @@ int MsgReceiver::listenLoop() {
         return -1;
     }
 
+    bool firstMsgReceived = false;
+    uint64_t epoch_msec;
+
     //inside listenLoop(), headerBuffer_ can be "AVSE\0", "PROP\0", or "QUIT\0"
     recvHeaderNext_ = true;
-    int valread;
     while (true) {
         //auto start = std::chrono::high_resolution_clock::now();
         //perform socket read -> this is blocking info
         //receive header
         if (recvHeaderNext_) {
-            valread = recv(sock_, static_cast<void *>(&headerBuffer_), HEADER_SIZE, 0);
-            
+            ReadReadMessage(sock_, static_cast<void *>(&headerBuffer_), HEADER_SIZE);
+            std::cout << "[PLOT] Received " << headerBuffer_ << std::endl;
         } else {    //receive message
             try {
                 //valread = recv(sock_, static_cast<void *>(&snapBuffer_), messageTypeToMessageSize.at(snapBuffer_.msgType), 0);
                 switch (snapBuffer_.msgType)
                 {
                 case AVSEN:
-                    valread = recv(sock_, static_cast<void *>(&snapBuffer_.avsenMsg), messageTypeToMessageSize.at(snapBuffer_.msgType), 0);
+                    ReadReadMessage(sock_, static_cast<void *>(&snapBuffer_.avsenMsg), messageTypeToMessageSize.at(snapBuffer_.msgType));
+                    if (!firstMsgReceived) {
+                        epoch_msec = snapBuffer_.avsenMsg.time_msec;
+                        //std::cout << "HEY THIS IS EPOCH: " << epoch_msec << std::endl;
+                        firstMsgReceived = true;
+                    }
                     break;
                 case PROPSEN:
-                    valread = recv(sock_, static_cast<void *>(&snapBuffer_.propsenMsg), messageTypeToMessageSize.at(snapBuffer_.msgType), 0);
+                    ReadReadMessage(sock_, static_cast<void *>(&snapBuffer_.propsenMsg), messageTypeToMessageSize.at(snapBuffer_.msgType));
+                    if (!firstMsgReceived) {
+                        epoch_msec = snapBuffer_.propsenMsg.time_msec;
+                        //std::cout << "HEY THIS IS EPOCH: " << epoch_msec << std::endl;
+                        firstMsgReceived = true;
+                    }
                     break;
                 default:
                     break;
@@ -139,23 +156,19 @@ int MsgReceiver::listenLoop() {
             }
         }
 
-        if (valread == -1) {
-            std::cout << "An error occurred\n, terminating receiver..." << std::endl;
-            return -1;
-        } else if (valread == 0) {
-            std::cout << "Server socket has shutdown, terminating receiver..." << std::endl;
-            return 0;   //we consider this a graceful exit
-        }
-
         //handle shutdown of plotter
         //must ensure that server doesn't shut down
         if (recvHeaderNext_ && std::string(headerBuffer_) == "QUIT\0") {
             std::cout << "Received QUIT header, terminating plotter..." << std::endl;
+
             //signal to GraphManager to stop
             mutexRef_.lock();
             snapBuffer_.msgType = QUIT;
             qRef_.push(snapBuffer_);
             mutexRef_.unlock();
+
+            // Close socket to GUI
+            close(sock_);
 
             return 0;
         }
@@ -172,13 +185,20 @@ int MsgReceiver::listenLoop() {
                 return -1;
             }
         } else {
-            /*
-            if (snapBuffer_.msgType == MessageType::AVSEN) {
-                std::cout << snapBuffer_.avsenMsg.accel[0] << std::endl;
-            } else {
-                std::cout << snapBuffer_.propsenMsg.pt[0] << std::endl;
+            //package timestamp
+            switch (snapBuffer_.msgType) {
+            case AVSEN:
+                snapBuffer_.avsenMsg.time_msec -= epoch_msec;
+                //std::cout << "time_msec in avsenMsg: " << snapBuffer_.avsenMsg.time_msec << std::endl;
+                break;
+            case PROPSEN:
+                snapBuffer_.propsenMsg.time_msec -= epoch_msec;
+                //std::cout << "time_msec in propsenMsg: " << snapBuffer_.propsenMsg.time_msec << std::endl;
+                break;
+            default:
+                break;
             }
-            */
+            
             mutexRef_.lock();
             qRef_.push(snapBuffer_);
             mutexRef_.unlock();
@@ -237,11 +257,11 @@ int MsgReceiver::listen() {
         //perform socket read -> this is blocking info
         //receive header
         if (recvHeaderNext_) {
-            valread = recv( sock, static_cast<void *>(&headerBuffer_), HEADER_SIZE, 0);
-            
+            ReadReadMessage( sock, static_cast<void *>(&headerBuffer_), HEADER_SIZE);
+
         } else {    //receive message
             try {
-                valread = recv( sock, static_cast<void *>(&snapBuffer_), messageTypeToMessageSize.at(snapBuffer_.msgType), 0);
+                ReadReadMessage( sock, static_cast<void *>(&snapBuffer_), messageTypeToMessageSize.at(snapBuffer_.msgType));
             } catch (std::out_of_range& exception) {
                 std::cout << "Improper message size, terminating receiver..." << std::endl;
                 std::cout << exception.what() << std::endl;

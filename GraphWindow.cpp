@@ -63,7 +63,7 @@ canvas_()
         normYPos = normalizedHeight * (i / numCols);
         //normYPos = normalizedHeight/(scalingFactor * scalingFactor) * (i / numCols);
 
-        std::cout << "plot #" << i << ": xPos: " << normXPos << ", yPos: " << normYPos << std::endl;
+        //std::cout << "plot #" << i << ": xPos: " << normXPos << ", yPos: " << normYPos << std::endl;
         
         PlotLabel label;
         if (i < selectedAvsen.size()) {
